@@ -43,7 +43,7 @@ if (app.Environment.IsDevelopment())
             //New DB!!!
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
-            await db.SeedBogusAsync();
+            db.SeedBogus(100);
         }
     }
 }

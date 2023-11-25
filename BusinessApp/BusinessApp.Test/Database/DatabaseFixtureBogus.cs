@@ -42,7 +42,7 @@ namespace BusinessApp.Test.Database
         {
             // ... initialize data in the test database and/or use async calls here ...
             await _db.Database.EnsureCreatedAsync();
-            await _db.SeedBogusAsync(50);
+            _db.SeedBogus(50);
         }
 
         public async Task DisposeAsync()

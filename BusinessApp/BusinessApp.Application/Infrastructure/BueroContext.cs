@@ -39,21 +39,21 @@ namespace BusinessApp.Application.Infrastructure
                 .LogTo(Console.WriteLine);
                 */
 
-        public async Task<int> SeedBogusAsync(int anz)
+        public int SeedBogus(int anz)
         {
             var fakePerson = new Faker<Model.Person>().CustomInstantiator(f =>
             {
                 return new Model.Person(f.Person.FullName, f.Date.Recent(10000).ToUniversalTime(), f.PickRandom<Geschlecht>());
             }).Generate(anz).ToList();
             AddRange(fakePerson);
-            await SaveChangesAsync();
+            SaveChanges();
 
             var fakeGeraet = new Faker<Geraet>().CustomInstantiator(f =>
             {
-                return new Geraet(f.Lorem.Word(), f.Lorem.Word(), f.Random.Number(1,50));
+                return new Geraet(f.Lorem.Word(), f.Lorem.Word(), fakePerson[f.Random.Number(0,anz-1)].Id);
             }).Generate(anz).ToList();
             AddRange(fakeGeraet);
-            await SaveChangesAsync();
+            SaveChanges();
 
             return 0;
         }
