@@ -27,7 +27,6 @@ namespace BusinessApp.Test.Database
                 .UseSqlite(_connection)
                 .Options);
         }
-
         public DatabaseFixtureBogus()
         {
             _connection = new SqliteConnection(connectionString);
@@ -43,7 +42,7 @@ namespace BusinessApp.Test.Database
         {
             // ... initialize data in the test database and/or use async calls here ...
             await _db.Database.EnsureCreatedAsync();
-            await _db.SeedBogusAsync();
+            await _db.SeedBogusAsync(50);
         }
 
         public async Task DisposeAsync()

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace BusinessApp.Test.Database
 {
-    public class BueroContextTests : IClassFixture<DatabaseFixture>
+    public class BueroContextTests : IClassFixture<DatabaseFixtureBogus>
     {
-        DatabaseFixture _fixture;
+        DatabaseFixtureBogus _fixture;
         BueroContext    _dbContext;
-        public BueroContextTests(DatabaseFixture fixture)
+        public BueroContextTests(DatabaseFixtureBogus fixture)
         {
             _fixture = fixture;
             _dbContext = fixture.Context;
@@ -27,10 +27,6 @@ namespace BusinessApp.Test.Database
         [Fact]
         public void SeedSuccessTest()
         {
-            Assert.True(_dbContext.Bueros.ToList().Count > 0);
-            Assert.True(_dbContext.Parkplaetze.ToList().Count > 0);
-            Assert.True(_dbContext.Raeume.ToList().Count > 0);
-            Assert.True(_dbContext.Rollen.ToList().Count > 0);
             Assert.True(_dbContext.Geraete.ToList().Count > 0);
             Assert.True(_dbContext.Personen.ToList().Count > 0);
         }

@@ -14,7 +14,7 @@ namespace BusinessApp.Application.Infrastructure
     public class BueroContext : DbContext
     {
         public DbSet<Model.Person> Personen => Set<Model.Person>();
-        public DbSet<Raum> Raeume => Set<Raum>();
+        public DbSet<Geraet> Geraete => Set<Geraet>();
 
         public string DbPath { get; }
 
@@ -50,7 +50,7 @@ namespace BusinessApp.Application.Infrastructure
 
             var fakeGeraet = new Faker<Geraet>().CustomInstantiator(f =>
             {
-                return new Geraet(f.Lorem.Word(), f.Lorem.Word(), f.Random.Number(1,50), null);
+                return new Geraet(f.Lorem.Word(), f.Lorem.Word(), f.Random.Number(1,50));
             }).Generate(anz).ToList();
             AddRange(fakeGeraet);
             await SaveChangesAsync();

@@ -19,12 +19,12 @@ namespace BusinessApp.Application.Model
         public string Name { get; set; }
 
         [Column("g_person")]
-        public int? PersonId { get; set; }
+        public int PersonId { get; set; }
 
-        public Person? Person { get; set; }
+        public Person Person { get; set; }
 
 
-        public Geraet(string art, string name, int? personId)
+        public Geraet(string art, string name, int personId)
         {
             Art = art;
             Name = name;
