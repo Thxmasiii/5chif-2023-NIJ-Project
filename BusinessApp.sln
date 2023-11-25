@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessApp.Test", "Busines
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessAppConsole", "BusinessApp\BusinessAppConsole\BusinessAppConsole.csproj", "{105A6695-3450-4A57-9625-8A940DC076DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessApp.WebAPI", "BusinessApp.WebAPI\BusinessApp.WebAPI.csproj", "{2E2331FB-C318-4E41-B2E8-9C64DA00E53D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessApp.WebAPI", "BusinessApp.WebAPI\BusinessApp.WebAPI.csproj", "{2E2331FB-C318-4E41-B2E8-9C64DA00E53D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessApp.WebApp", "BusinessApp.WebApp\BusinessApp.WebApp.csproj", "{98B12019-F922-4931-9894-FC2F8695EE74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{2E2331FB-C318-4E41-B2E8-9C64DA00E53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E2331FB-C318-4E41-B2E8-9C64DA00E53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E2331FB-C318-4E41-B2E8-9C64DA00E53D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98B12019-F922-4931-9894-FC2F8695EE74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98B12019-F922-4931-9894-FC2F8695EE74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98B12019-F922-4931-9894-FC2F8695EE74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98B12019-F922-4931-9894-FC2F8695EE74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

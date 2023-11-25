@@ -41,8 +41,41 @@ long ReadPostgresTimer()
     Stopwatch timer = new();
     timer.Start();
 
-     var personen = bueroContext.Personen.ToList();
-     var geraete = bueroContext.Geraete.ToList();
+    //no filter
+    var personen = bueroContext.Personen.ToList();
+    var geraete = bueroContext.Geraete.ToList();
+
+    //with filter 
+    var personenFilter = bueroContext.Personen.ToList().FindAll(x => x.Gebdat < DateTime.Now.AddDays(-5000));
+    var geraeteFilter = bueroContext.Geraete.ToList().FindAll(x => x.Person.Equals(personen[0]));
+
+    //with filter and projektion
+    var personenFilterProjektion =
+    from person in personen.AsEnumerable()
+    where person.Gebdat < DateTime.Now.AddDays(-5000)
+    select person.Name; 
+
+    var geraeteFilterProjektion =
+    from g in geraete.AsEnumerable()
+    where g.Person.Equals(personen[0])
+    select g.Name;
+
+    //with filter, projektion, sorting
+    var personenFilterProjektionSorting =
+    from person in personen.AsEnumerable()
+    where person.Gebdat < DateTime.Now.AddDays(-5000)
+    orderby person.Name
+    select person.Name;
+
+    var geraeteFilterProjektionSorting =
+    from g in geraete.AsEnumerable()
+    where g.Person.Equals(personen[0])
+    orderby g.Name
+    select g.Name;
+
+    //no filter aggregate 
+    var personenAggregate = bueroContext.Personen.ToList().Max(x => x.Gebdat);
+    var geraeteAggregate = bueroContext.Geraete.ToList().Max(x => x.Person.Gebdat);
 
     timer.Stop();
     return timer.ElapsedMilliseconds;
@@ -51,11 +84,11 @@ long ReadPostgresTimer()
 //Postgres Update
 long UpdatePostgresTimer()
 {
-    Stopwatch timer = new();
-    timer.Start();
-
     var personen = bueroContext.Personen.ToList();
     var geraete = bueroContext.Geraete.ToList();
+
+    Stopwatch timer = new();
+    timer.Start();
     foreach (var person in personen)
     {
         person.Name = person.Name + "Test";
@@ -73,11 +106,10 @@ long UpdatePostgresTimer()
 //Postgres Delete
 long DeletePostgresTimer()
 {
-    Stopwatch timer = new();
-    timer.Start();
-
     var personen = bueroContext.Personen.ToList();
     var geraete = bueroContext.Geraete.ToList();
+    Stopwatch timer = new();
+    timer.Start();
 
     bueroContext.Personen.RemoveRange(personen);
     bueroContext.Geraete.RemoveRange(geraete);
@@ -98,7 +130,8 @@ long CreateAndInsertMongoTimer(int anz)
     Stopwatch timer = new();
     timer.Start();
 
-    bueroMongoContext.SeedBogus(anz);
+    //bueroMongoContext.SeedBogus(anz);
+    bueroMongoContext.SeedBogusIndex(anz);
 
     timer.Stop();
     return timer.ElapsedMilliseconds;
@@ -110,8 +143,47 @@ long ReadMongoTimer()
     Stopwatch timer = new();
     timer.Start();
 
+    // no filter
     var personen = bueroMongoContext.Personen.Find(x => true).ToList();
     var geraete = bueroMongoContext.Geraete.Find(x => true).ToList();
+
+    // filter
+    var personenFilter = bueroMongoContext.Personen.Find(x => x.Gebdat < DateTime.Now.AddDays(-5000)).ToList();
+    var geraeteFilter = bueroMongoContext.Geraete.Find(x => x.Person.Equals(personen[0])).ToList();
+
+    // filter and projektion
+    var personenFilterProjektion = bueroMongoContext.Personen
+        .Find(x => x.Gebdat < DateTime.Now.AddDays(-5000))
+        .Project(x => x.Name)
+        .ToList();
+    var geraeteFilterProjektion = bueroMongoContext.Geraete
+        .Find(x => x.Person.Equals(personen[0]))
+        .Project(x => x.Name)
+        .ToList();
+
+    //with filter, projektion, sorting
+    var personenFilterProjektionSorting = bueroMongoContext.Personen
+        .Find(x => x.Gebdat < DateTime.Now.AddDays(-5000))
+        .Project(x => x.Name)
+        .SortBy(x => x.Name)
+        .ToList();
+    var geraeteFilterProjektionSorting = bueroMongoContext.Geraete
+        .Find(x => x.Person.Equals(personen[0]))
+        .Project(x => x.Name)
+        .SortBy(x => x.Name)
+        .ToList();
+
+    //no filter, aggregation
+    var personenAggregation = bueroMongoContext.Personen.Aggregate()
+                                .Group(x => x.Gebdat, g=>
+                                    new {
+                                        Max = g.Max(a => DateTime.Now - a.Gebdat)
+                                    }).ToList()[0];
+    var geraeteAggregation = bueroMongoContext.Geraete.Aggregate()
+                                .Group(x => x.Person, g =>
+                                    new {
+                                        Max = g.Max(a => DateTime.Now - a.Person.Gebdat)
+                                    }).ToList()[0];
 
     timer.Stop();
     return timer.ElapsedMilliseconds;
@@ -167,7 +239,7 @@ long DeleteMongoTimer()
 //}
 //Console.WriteLine(mongo);
 
-int[] timearray = { 100, 1000, 10000, 100000 };
+int[] timearray = { 100, 1000 };
 foreach (int time in timearray)
 {
     Console.WriteLine($"{time}: ");
@@ -178,3 +250,12 @@ foreach (int time in timearray)
     mongo.AddRow("DELETE", DeletePostgresTimer() + "ms", DeleteMongoTimer() + "ms");
     Console.WriteLine(mongo);
 }
+
+Console.WriteLine("Vergleich ohne und mit Aggregation");
+CreateAndInsertPostgresTimer(100);
+CreateAndInsertMongoTimer(100);
+Console.WriteLine("SQL: ");
+ConsoleTable agg = new("", "SQL", "Mongo");
+agg.AddRow("ohne", ReadPostgresTimer() + "ms", ReadMongoTimer() + "ms");
+agg.AddRow("mit", ReadPostgresTimer() + "ms", ReadMongoTimer() + "ms");
+Console.WriteLine(agg);

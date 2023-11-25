@@ -103,14 +103,13 @@ namespace BusinessApp.Application.Infrastructure
 
         public void SeedBogus(int anz)
         {
-            int counter = 1;
             var persons = new Faker<MongoPerson>("de").CustomInstantiator(f =>
             {
                 return new MongoPerson(
                     Name: f.Name.FullName(),
                     Gebdat: f.Date.Recent().ToUniversalTime(),
                     Geschlecht: f.Random.Enum<Geschlecht>(),
-                    Id: new ObjectId(counter++.ToString("x24")));
+                    Id: ObjectId.GenerateNewId());
             })
             .Generate(anz).ToList();
             Personen.InsertMany(persons);
@@ -118,19 +117,48 @@ namespace BusinessApp.Application.Infrastructure
             //    new CreateIndexModel<MongoPerson>(Builders<MongoPerson>.IndexKeys.Ascending(p => p.Id),
             //    new CreateIndexOptions() { Unique = true }));
 
-            counter = 1;
             var geraete = new Faker<MongoGeraet>("de").CustomInstantiator(f =>
             {
                 return new MongoGeraet(
                     Name: f.Commerce.ProductName(),
                     Person: f.PickRandom<MongoPerson>(persons),
-                    Id: new ObjectId(counter++.ToString("x24")));
+                    Id: ObjectId.GenerateNewId());
             })
             .Generate(anz).ToList();
             Geraete.InsertMany(geraete);
             //Geraete.Indexes.CreateOne(
             //    new CreateIndexModel<MongoPerson>(Builders<MongoPerson>.IndexKeys.Ascending(p => p.Id),
             //    new CreateIndexOptions() { Unique = true }));
+        }
+
+        public void SeedBogusIndex(int anz)
+        {
+            var persons = new Faker<MongoPerson>("de").CustomInstantiator(f =>
+            {
+                return new MongoPerson(
+                    Name: f.Name.FullName(),
+                    Gebdat: f.Date.Recent(10000).ToUniversalTime(),
+                    Geschlecht: f.Random.Enum<Geschlecht>(),
+                    Id: ObjectId.GenerateNewId());
+            })
+            .Generate(anz).ToList();
+            Personen.InsertMany(persons);
+            Personen.Indexes.CreateOne(
+                new CreateIndexModel<MongoPerson>(Builders<MongoPerson>.IndexKeys.Ascending(p => p.Id)));
+                //new CreateIndexOptions() { Unique = true }));
+
+            var geraete = new Faker<MongoGeraet>("de").CustomInstantiator(f =>
+            {
+                return new MongoGeraet(
+                    Name: f.Commerce.ProductName(),
+                    Person: f.PickRandom<MongoPerson>(persons),
+                    Id: ObjectId.GenerateNewId());
+            })
+            .Generate(anz).ToList();
+            Geraete.InsertMany(geraete);
+            Geraete.Indexes.CreateOne(
+                new CreateIndexModel<MongoGeraet>(Builders<MongoGeraet>.IndexKeys.Ascending(g => g.Id)));
+                //new CreateIndexOptions() { Unique = true }));
         }
     }
 }
