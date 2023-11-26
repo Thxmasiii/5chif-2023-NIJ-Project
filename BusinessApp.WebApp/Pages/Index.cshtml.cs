@@ -10,21 +10,22 @@ namespace BusinessApp.WebApp.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
-        Service service;
+        IService service;
 
-        public List<Person> persons { get; set; } = new();
-        List<MongoPerson> MongoPersons = new();
+        //public List<Person> persons { get; set; } = new();
+        //List<MongoPerson> MongoPersons = new();
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILogger<IndexModel> logger, IService _service)
         {
             _logger = logger;
+            service = _service;
+            //persons = service.BueroContext.Personen.ToList();
+            //MongoPersons = service.BueroMongoContext.Personen.Find(_ => true).ToList();
         }
 
-        public IndexModel(Service _service)
+        public IndexModel()
         {
-            service = _service;
-            persons = service.BueroContext.Personen.ToList();
-            MongoPersons = service.BueroMongoContext.Personen.Find(_ => true).ToList();
+            
         }
 
         public void OnGet()

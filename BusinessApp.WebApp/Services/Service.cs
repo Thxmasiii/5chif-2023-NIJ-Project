@@ -6,7 +6,7 @@ using static BusinessApp.Application.Infrastructure.BueroMongoContext;
 
 namespace BusinessApp.WebApp.Services
 {
-    public class Service
+    public class Service: IService
     {
         public BueroContext BueroContext { get; set; }
         public BueroMongoContext BueroMongoContext { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using Bogus.DataSets;
 using DnsClient;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
@@ -13,7 +14,7 @@ using System.Linq;
 
 namespace BusinessApp.Application.Infrastructure
 {
-    public class BueroMongoContext
+    public class BueroMongoContext : DbContext
     {
         public enum Geschlecht
         {
