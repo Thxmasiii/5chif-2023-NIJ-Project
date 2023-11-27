@@ -8,13 +8,14 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Events;
+using ParkBee.MongoDb;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BusinessApp.Application.Infrastructure
 {
-    public class BueroMongoContext : DbContext
+    public class BueroMongoContext : MongoContext
     {
         public enum Geschlecht
         {
@@ -28,55 +29,60 @@ namespace BusinessApp.Application.Infrastructure
         public IMongoCollection<MongoPerson> Personen => Db.GetCollection<MongoPerson>("persons");
         public IMongoCollection<MongoGeraet> Geraete => Db.GetCollection<MongoGeraet>("geraete");
 
-        public static BueroMongoContext FromConnectionString(string connectionString, bool logging = false)
-        {
-            var settings = MongoClientSettings.FromConnectionString(connectionString);
-            settings.ServerSelectionTimeout = TimeSpan.FromSeconds(5);
-            if (logging)
-            {
-                settings.ClusterConfigurator = cb =>
-                {
-                    cb.Subscribe<CommandStartedEvent>(e =>
-                    {
-                        // Bei update Statements geben wir die Anweisung aus, wie wir sie in der Shell eingeben könnten.
-                        if (e.Command.TryGetValue("updates", out var updateCmd))
-                        {
-                            var collection = e.Command.GetValue("update");
-                            var isUpdateOne = updateCmd[0]["q"].AsBsonDocument.Contains("_id");
-                            foreach (var cmd in updateCmd.AsBsonArray)
-                            {
-                                Console.WriteLine($"db.getCollection(\"{collection}\").{(isUpdateOne ? "updateOne" : "updateMany")}({updateCmd[0]["q"]}, {updateCmd[0]["u"]})");
-                            }
-                        }
-                        // Bei aggregate Statements geben wir die Anweisung aus, wie wir sie in der Shell eingeben könnten.
-                        if (e.Command.TryGetValue("aggregate", out var aggregateCmd))
-                        {
-                            var collection = aggregateCmd.AsString;
-                            Console.WriteLine($"db.getCollection(\"{collection}\").aggregate({e.Command["pipeline"]})");
-                        }
+        //public static BueroMongoContext FromConnectionString(string connectionString, bool logging = false)
+        //{
+        //    var settings = MongoClientSettings.FromConnectionString(connectionString);
+        //    settings.ServerSelectionTimeout = TimeSpan.FromSeconds(5);
+        //    if (logging)
+        //    {
+        //        settings.ClusterConfigurator = cb =>
+        //        {
+        //            cb.Subscribe<CommandStartedEvent>(e =>
+        //            {
+        //                // Bei update Statements geben wir die Anweisung aus, wie wir sie in der Shell eingeben könnten.
+        //                if (e.Command.TryGetValue("updates", out var updateCmd))
+        //                {
+        //                    var collection = e.Command.GetValue("update");
+        //                    var isUpdateOne = updateCmd[0]["q"].AsBsonDocument.Contains("_id");
+        //                    foreach (var cmd in updateCmd.AsBsonArray)
+        //                    {
+        //                        Console.WriteLine($"db.getCollection(\"{collection}\").{(isUpdateOne ? "updateOne" : "updateMany")}({updateCmd[0]["q"]}, {updateCmd[0]["u"]})");
+        //                    }
+        //                }
+        //                // Bei aggregate Statements geben wir die Anweisung aus, wie wir sie in der Shell eingeben könnten.
+        //                if (e.Command.TryGetValue("aggregate", out var aggregateCmd))
+        //                {
+        //                    var collection = aggregateCmd.AsString;
+        //                    Console.WriteLine($"db.getCollection(\"{collection}\").aggregate({e.Command["pipeline"]})");
+        //                }
 
-                        // Bei Filter Statements geben wir die find Anweisung aus.
-                        if (e.Command.TryGetValue("find", out var findCmd))
-                        {
-                            var collection = findCmd.AsString;
-                            Console.WriteLine($"db.getCollection(\"{collection}\").find({e.Command["filter"]})");
-                        }
-                    });
-                };
-            }
-            var client = new MongoClient(settings);
-            var db = client.GetDatabase("bueroDb");
-            // LowerCase property names.
-            var conventions = new ConventionPack
-            {
-                new CamelCaseElementNameConvention(),
-                new IgnoreIfNullConvention(ignoreIfNull: true)
-            };
-            ConventionRegistry.Register(nameof(CamelCaseElementNameConvention), conventions, _ => true);
-            return new BueroMongoContext(client, db);
-        }
+        //                // Bei Filter Statements geben wir die find Anweisung aus.
+        //                if (e.Command.TryGetValue("find", out var findCmd))
+        //                {
+        //                    var collection = findCmd.AsString;
+        //                    Console.WriteLine($"db.getCollection(\"{collection}\").find({e.Command["filter"]})");
+        //                }
+        //            });
+        //        };
+        //    }
+        //    var client = new MongoClient(settings);
+        //    var db = client.GetDatabase("bueroDb");
+        //    // LowerCase property names.
+        //    var conventions = new ConventionPack
+        //    {
+        //        new CamelCaseElementNameConvention(),
+        //        new IgnoreIfNullConvention(ignoreIfNull: true)
+        //    };
+        //    ConventionRegistry.Register(nameof(CamelCaseElementNameConvention), conventions, _ => true);
+        //    //return new BueroMongoContext(options, client, db);
+        //    return new BueroMongoContext(options =>
+        //    {
+        //        options.ConnectionString = "mongodb://localhost:27017";
+        //        options.DatabaseName = "buero";
+        //    });
+        //}
 
-        private BueroMongoContext(MongoClient client, IMongoDatabase db)
+        public BueroMongoContext(IMongoContextOptionsBuilder options, MongoClient client, IMongoDatabase db) : base(options)
         {
             Client = client;
             Db = db;

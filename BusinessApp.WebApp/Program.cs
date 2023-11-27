@@ -1,6 +1,8 @@
 using BusinessApp.Application.Infrastructure;
 using BusinessApp.WebApp.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ParkBee.MongoDb.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,9 +26,15 @@ builder.Services.AddDbContext<BueroContext>(c =>
 }
 );
 
-BueroMongoContext BueroMongoContext = BueroMongoContext.FromConnectionString("mongodb://localhost:27017", logging: false);
+//BueroMongoContext BueroMongoContext = BueroMongoContext.FromConnectionString("mongodb://localhost:27017", logging: false);
 
 // MONGO ADDDDDEN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+builder.Services.AddMongoContext<BueroMongoContext>(options =>
+{
+    options.ConnectionString = "mongodb://localhost:27017";
+    options.DatabaseName = "buero";
+});
 
 var app = builder.Build();
 
