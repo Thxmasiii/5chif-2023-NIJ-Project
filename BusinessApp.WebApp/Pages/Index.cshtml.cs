@@ -12,8 +12,9 @@ namespace BusinessApp.WebApp.Pages
         private readonly ILogger<IndexModel> _logger;
         IService service;
 
-        //public List<Person> persons { get; set; } = new();
-        //List<MongoPerson> MongoPersons = new();
+        public List<Person> persons { get; set; } = new();
+        public List<Geraet> gereate { get; set; } = new();
+        List<MongoPerson> MongoPersons = new();
 
         public IndexModel(ILogger<IndexModel> logger, IService _service)
         {
@@ -33,9 +34,19 @@ namespace BusinessApp.WebApp.Pages
 
         }
 
+        public void setGeraete(int id)
+        {
+            gereate = service.GetGeraetePerPerson(id);
+        }
+
         public void changeFilter(int filter)
         {
             
+        }
+
+        public void changeDatabaseStruct(int filter)
+        {
+
         }
     }
 }

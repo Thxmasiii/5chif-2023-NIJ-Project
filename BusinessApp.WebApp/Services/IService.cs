@@ -1,4 +1,6 @@
-﻿namespace BusinessApp.WebApp.Services
+﻿using BusinessApp.Application.Model;
+
+namespace BusinessApp.WebApp.Services
 {
     public interface IService
     {
@@ -10,5 +12,6 @@
         long ReadMongoTimer(bool withIndex, int anz, int filter);
         long UpdateMongoTimer(bool withIndex, int anz);
         long DeleteMongoTimer(bool withIndex, int anz);
+        List<Geraet> GetGeraetePerPerson(int id);
     }
 }

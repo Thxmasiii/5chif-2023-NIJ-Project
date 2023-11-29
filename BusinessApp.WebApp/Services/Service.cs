@@ -1,4 +1,6 @@
-﻿using BusinessApp.Application.Infrastructure;
+﻿using Bogus;
+using BusinessApp.Application.Infrastructure;
+using BusinessApp.Application.Model;
 using Microsoft.EntityFrameworkCore.Query;
 using MongoDB.Driver;
 using System.Diagnostics;
@@ -31,8 +33,48 @@ namespace BusinessApp.WebApp.Services
             return timer.ElapsedMilliseconds;
         }
 
+        public List<Application.Model.Person> GetPersonsNoFilter(int anz)
+        {
+            CreateAndInsertPostgresTimer(anz);
+            Stopwatch timer = new();
+
+            timer.Start();
+            var personen = BueroContext.Personen.ToList();
+            timer.Stop();
+
+            return personen;
+        }
+
+        public List<Application.Model.Person> GetPersonsWithFilter(int anz)
+        {
+            CreateAndInsertPostgresTimer(anz);
+            Stopwatch timer = new();
+
+            timer.Start();
+            var personen = BueroContext.Personen.ToList().FindAll(x => x.Gebdat < DateTime.Now.AddDays(-5000));
+            timer.Stop();
+
+            return personen;
+        }
+
+        //public List<Tuple<int,string>> GetPersonsWithFilterAndProjektion(int anz)
+        //{
+        //    CreateAndInsertPostgresTimer(anz);
+        //    Stopwatch timer = new();
+
+        //    timer.Start();
+        //    var query = (from person in personen.AsEnumerable()
+        //                where person.Gebdat < DateTime.Now.AddDays(-5000)
+        //                select new { Id = person.Id, Name = person.Name });<
+        //    var personen = query.ToList<Tuple<int, string>>();
+            
+        //    timer.Stop();
+
+        //    return personen;
+        //}
+
         //Postgres Read
-        public long ReadPostgresTimer(int anz, int filter) // 0 = no filter, 1 = filter, 2 = filter and projection, 3 = filter, projection and sorting, 4 = no filter aggregate
+        public (List<Person>,long) ReadPostgresTimer(int anz, int filter) // 0 = no filter, 1 = filter, 2 = filter and projection, 3 = filter, projection and sorting, 4 = no filter aggregate
         {
             CreateAndInsertPostgresTimer(anz);
             Stopwatch timer = new();
@@ -44,21 +86,20 @@ namespace BusinessApp.WebApp.Services
             //with filter 
             if (filter == 1)
             {
-                var personenFilter = BueroContext.Personen.ToList().FindAll(x => x.Gebdat < DateTime.Now.AddDays(-5000));
-                var geraeteFilter = BueroContext.Geraete.ToList().FindAll(x => x.Person.Equals(personen[0]));
+                personen = BueroContext.Personen.ToList().FindAll(x => x.Gebdat < DateTime.Now.AddDays(-5000));
+                geraete = BueroContext.Geraete.ToList().FindAll(x => x.Person.Equals(personen[0]));
             }
             //with filter and projektion
             if (filter == 2)
             {
-                var personenFilterProjektion =
-                    from person in personen.AsEnumerable()
-                    where person.Gebdat < DateTime.Now.AddDays(-5000)
-                    select person.Name;
-
-                var geraeteFilterProjektion =
-                    from g in geraete.AsEnumerable()
-                    where g.Person.Equals(personen[0])
-                    select g.Name;
+                var query = from person in personen
+                            where person.Gebdat < DateTime.Now.AddDays(-5000)
+                            select new { Id = person.Id, Name = person.Name };
+                //personen = query.ToList<(int, string)> ();
+                //geraete =
+                //    from g in geraete.AsEnumerable()
+                //    where g.Person.Equals(personen[0])
+                //    select g.Name;
             }
 
 
@@ -86,6 +127,11 @@ namespace BusinessApp.WebApp.Services
             }
             timer.Stop();
             return timer.ElapsedMilliseconds;
+        }
+
+        public List<Geraet> GetGeraetePerPerson(int id)
+        {
+            return BueroContext.Personen.ToList().FirstOrDefault(x => x.Id == id).Geraete.ToList();
         }
 
         //Postgres Update
