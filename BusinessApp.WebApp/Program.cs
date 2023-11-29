@@ -1,7 +1,9 @@
 using BusinessApp.Application.Infrastructure;
 using BusinessApp.WebApp.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
+using ParkBee.MongoDb;
 using ParkBee.MongoDb.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,15 +28,10 @@ builder.Services.AddDbContext<BueroContext>(c =>
 }
 );
 
-//BueroMongoContext BueroMongoContext = BueroMongoContext.FromConnectionString("mongodb://localhost:27017", logging: false);
+BueroMongoContext BueroMongoContext = BueroMongoContext.FromConnectionString("mongodb://localhost:27017", logging: false);
+BueroMongoContext.DeleteDb();
 
-// MONGO ADDDDDEN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-builder.Services.AddMongoContext<BueroMongoContext>(options =>
-{
-    options.ConnectionString = "mongodb://localhost:27017";
-    options.DatabaseName = "buero";
-});
+builder.Services.AddTransient(provider => BueroMongoContext);
 
 var app = builder.Build();
 
@@ -44,6 +41,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    BueroContext.Database.EnsureDeleted();
+    BueroContext.Database.EnsureCreated();
 }
 
 app.UseHttpsRedirection();
