@@ -5,7 +5,6 @@ namespace BusinessApp.WebApp.Services
     public interface IService
     {
         long CreateAndInsertPostgresTimer(int anz);
-        long ReadPostgresTimer(int anz, int filter);
         long UpdatePostgresTimer(int anz);
         long DeletePostgresTimer(int anz);
         long CreateAndInsertMongoTimer(bool withIndex, int anz);
