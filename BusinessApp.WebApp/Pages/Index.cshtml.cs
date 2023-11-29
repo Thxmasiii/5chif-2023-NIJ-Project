@@ -24,10 +24,10 @@ namespace BusinessApp.WebApp.Pages
             //MongoPersons = service.BueroMongoContext.Personen.Find(_ => true).ToList();
         }
 
-        public IndexModel()
-        {
+        //public IndexModel()
+        //{
             
-        }
+        //}
 
         public void OnGet()
         {

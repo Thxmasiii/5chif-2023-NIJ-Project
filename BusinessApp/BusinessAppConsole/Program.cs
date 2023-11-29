@@ -254,7 +254,6 @@ foreach (int time in timearray)
 Console.WriteLine("Vergleich ohne und mit Aggregation");
 CreateAndInsertPostgresTimer(100);
 CreateAndInsertMongoTimer(100);
-Console.WriteLine("SQL: ");
 ConsoleTable agg = new("", "SQL", "Mongo");
 agg.AddRow("ohne", ReadPostgresTimer() + "ms", ReadMongoTimer() + "ms");
 agg.AddRow("mit", ReadPostgresTimer() + "ms", ReadMongoTimer() + "ms");
