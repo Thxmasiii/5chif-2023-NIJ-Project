@@ -33,5 +33,6 @@ namespace BusinessApp.Application.Model
             Gebdat = gebdat;
             Geschlecht = geschlecht;
         }
+        public Person() { }
     }
 }

@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore.Query;
 using MongoDB.Driver;
 using System.Diagnostics;
 using static BusinessApp.Application.Infrastructure.BueroMongoContext;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Person = BusinessApp.Application.Model.Person;
 
 namespace BusinessApp.WebApp.Services
 {
-    public class Service: IService
+    public class Service : IService
     {
         public BueroContext BueroContext { get; set; }
         public BueroMongoContext BueroMongoContext { get; set; }
@@ -17,7 +19,7 @@ namespace BusinessApp.WebApp.Services
         {
             BueroContext = bueroContext;
             BueroMongoContext = bueroMongoContext;
-            Console.WriteLine(CreateAndInsertMongoTimer(true,10) + "ms ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine(CreateAndInsertMongoTimer(true, 10) + "ms ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         }
 
         //Postgres Create
@@ -34,7 +36,8 @@ namespace BusinessApp.WebApp.Services
             return timer.ElapsedMilliseconds;
         }
 
-        public List<Application.Model.Person> GetPersonsNoFilter(int anz)
+        //Postgres Read
+        public (long, List<Person>) ReadPersonsNoFilter(int anz)
         {
             CreateAndInsertPostgresTimer(anz);
             Stopwatch timer = new();
@@ -43,10 +46,10 @@ namespace BusinessApp.WebApp.Services
             var personen = BueroContext.Personen.ToList();
             timer.Stop();
 
-            return personen;
+            return (timer.ElapsedMilliseconds, personen);
         }
 
-        public List<Application.Model.Person> GetPersonsWithFilter(int anz)
+        public (long, List<Person>) ReadPersonsWithFilter(int anz)
         {
             CreateAndInsertPostgresTimer(anz);
             Stopwatch timer = new();
@@ -55,79 +58,73 @@ namespace BusinessApp.WebApp.Services
             var personen = BueroContext.Personen.ToList().FindAll(x => x.Gebdat < DateTime.Now.AddDays(-5000));
             timer.Stop();
 
-            return personen;
+            return (timer.ElapsedMilliseconds, personen);
         }
 
-        //public List<Tuple<int,string>> GetPersonsWithFilterAndProjektion(int anz)
-        //{
-        //    CreateAndInsertPostgresTimer(anz);
-        //    Stopwatch timer = new();
-
-        //    timer.Start();
-        //    var query = (from person in personen.AsEnumerable()
-        //                where person.Gebdat < DateTime.Now.AddDays(-5000)
-        //                select new { Id = person.Id, Name = person.Name });<
-        //    var personen = query.ToList<Tuple<int, string>>();
-            
-        //    timer.Stop();
-
-        //    return personen;
-        //}
-
-        //Postgres Read
-        public (List<Person>,long) ReadPostgresTimer(int anz, int filter) // 0 = no filter, 1 = filter, 2 = filter and projection, 3 = filter, projection and sorting, 4 = no filter aggregate
+        public (long, List<Person>) ReadPersonsWithFilterAndProjektion(int anz)
         {
             CreateAndInsertPostgresTimer(anz);
+            var personen = BueroContext.Personen.ToList();
+            Stopwatch timer = new();
+
+            timer.Start();
+            var query = (from person in personen.AsEnumerable()
+                         where person.Gebdat < DateTime.Now.AddDays(-5000)
+                         select new { person.Id, person.Name });
+            timer.Stop();
+
+            personen.Clear();
+
+            query.ToList().ForEach(person =>
+            {
+                Person p = new Person();
+                p.Id = person.Id;
+                p.Name = person.Name;
+                personen.Add(p);
+            });
+
+            return (timer.ElapsedMilliseconds, personen);
+        }
+
+        public (long, List<Person>) ReadPersonsWithFilterProjektionAndSorting(int anz)
+        {
+            CreateAndInsertPostgresTimer(anz);
+            var personen = BueroContext.Personen.ToList();
             Stopwatch timer = new();
             timer.Start();
 
-            //no filter
-            var personen = BueroContext.Personen.ToList();
-            var geraete = BueroContext.Geraete.ToList();
-            //with filter 
-            if (filter == 1)
-            {
-                personen = BueroContext.Personen.ToList().FindAll(x => x.Gebdat < DateTime.Now.AddDays(-5000));
-                geraete = BueroContext.Geraete.ToList().FindAll(x => x.Person.Equals(personen[0]));
-            }
-            //with filter and projektion
-            if (filter == 2)
-            {
-                var query = from person in personen
-                            where person.Gebdat < DateTime.Now.AddDays(-5000)
-                            select new { Id = person.Id, Name = person.Name };
-                //personen = query.ToList<(int, string)> ();
-                //geraete =
-                //    from g in geraete.AsEnumerable()
-                //    where g.Person.Equals(personen[0])
-                //    select g.Name;
-            }
+            var personenFilterProjektionSorting =
+            from person in personen.AsEnumerable()
+            where person.Gebdat < DateTime.Now.AddDays(-5000)
+            orderby person.Name
+            select new { person.Id, person.Name };
 
-
-            //with filter, projektion, sorting
-            if (filter == 3)
-            {
-                var personenFilterProjektionSorting =
-                from person in personen.AsEnumerable()
-                where person.Gebdat < DateTime.Now.AddDays(-5000)
-                orderby person.Name
-                select person.Name;
-
-                var geraeteFilterProjektionSorting =
-                from g in geraete.AsEnumerable()
-                where g.Person.Equals(personen[0])
-                orderby g.Name
-                select g.Name;
-            }
-
-            //no filter aggregate 
-            if (filter == 4)
-            {
-                var personenAggregate = BueroContext.Personen.ToList().Max(x => x.Gebdat);
-                var geraeteAggregate = BueroContext.Geraete.ToList().Max(x => x.Person.Gebdat);
-            }
             timer.Stop();
-            return timer.ElapsedMilliseconds;
+
+            personen.Clear();
+
+            personenFilterProjektionSorting.ToList().ForEach(person =>
+            {
+                Person p = new Person();
+                p.Id = person.Id;
+                p.Name = person.Name;
+                personen.Add(p);
+            });
+
+            return (timer.ElapsedMilliseconds, personen);
+        }
+
+        public (long, DateTime) ReadPersonsWithAggregation(int anz)
+        {
+            CreateAndInsertPostgresTimer(anz);
+            var personen = BueroContext.Personen.ToList();
+            Stopwatch timer = new();
+            timer.Start();
+
+            var personenAggregate = BueroContext.Personen.ToList().Max(x => x.Gebdat);
+
+            timer.Stop();
+            return (timer.ElapsedMilliseconds, personenAggregate);
         }
 
         public List<Geraet> GetGeraetePerPerson(int id)
