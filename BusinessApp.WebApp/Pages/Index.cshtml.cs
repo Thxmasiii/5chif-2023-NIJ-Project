@@ -12,21 +12,24 @@ namespace BusinessApp.WebApp.Pages
         private readonly ILogger<IndexModel> _logger;
         IService service;
 
+        long sqlTimer = 0;
+        long mongoTimer = 0;
+
         public List<Person> persons { get; set; } = new();
         public List<Geraet> gereate { get; set; } = new();
-        List<MongoPerson> MongoPersons = new();
+        public List<MongoPerson> MongoPersons { get; set; } = new();
 
         public IndexModel(ILogger<IndexModel> logger, IService _service)
         {
             _logger = logger;
             service = _service;
-            //persons = service.BueroContext.Personen.ToList();
+            (sqlTimer, persons) = service.ReadPersonsNoFilter(1);
             //MongoPersons = service.BueroMongoContext.Personen.Find(_ => true).ToList();
         }
 
         //public IndexModel()
         //{
-            
+
         //}
 
         public void OnGet()
@@ -34,7 +37,7 @@ namespace BusinessApp.WebApp.Pages
 
         }
 
-        public void setGeraete(int id)
+        public void OnPostSetGeraete(int id)
         {
             gereate = service.GetGeraetePerPerson(id);
         }

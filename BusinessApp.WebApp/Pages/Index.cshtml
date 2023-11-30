@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="~/css/bootstrap.css" />
 
 <div class="text-center">
-    <h1 class="display-4">The incredible Data</h1>
+    <h1 class="display-4">The incredible Data @Model.persons.Count</h1>
     <div class="container">
         <div class="row">
             <div class="col">
@@ -32,9 +32,12 @@
     <div class="container">
         <div class="row">
             <div class="col">
+                 
                 @foreach (var person in @Model.persons)
                 {
-                    <p onclick="setGeraete(@person.Id)">@person.Name</p>
+                    <form method="post">
+                        <button  asp-page-handler="SetGeraete" asp-route-id="@person.Id">@person.Name</button>
+                    </form>
                 }
                 
             </div>

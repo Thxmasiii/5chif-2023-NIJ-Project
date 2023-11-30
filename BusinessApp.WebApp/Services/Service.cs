@@ -39,7 +39,7 @@ namespace BusinessApp.WebApp.Services
         //Postgres Read
         public (long, List<Person>) ReadPersonsNoFilter(int anz)
         {
-            CreateAndInsertPostgresTimer(anz);
+            //CreateAndInsertPostgresTimer(anz);
             Stopwatch timer = new();
 
             timer.Start();
@@ -51,7 +51,7 @@ namespace BusinessApp.WebApp.Services
 
         public (long, List<Person>) ReadPersonsWithFilter(int anz)
         {
-            CreateAndInsertPostgresTimer(anz);
+            //CreateAndInsertPostgresTimer(anz);
             Stopwatch timer = new();
 
             timer.Start();
@@ -63,7 +63,7 @@ namespace BusinessApp.WebApp.Services
 
         public (long, List<Person>) ReadPersonsWithFilterAndProjektion(int anz)
         {
-            CreateAndInsertPostgresTimer(anz);
+            //CreateAndInsertPostgresTimer(anz);
             var personen = BueroContext.Personen.ToList();
             Stopwatch timer = new();
 
@@ -88,7 +88,7 @@ namespace BusinessApp.WebApp.Services
 
         public (long, List<Person>) ReadPersonsWithFilterProjektionAndSorting(int anz)
         {
-            CreateAndInsertPostgresTimer(anz);
+            //CreateAndInsertPostgresTimer(anz);
             var personen = BueroContext.Personen.ToList();
             Stopwatch timer = new();
             timer.Start();
@@ -116,7 +116,7 @@ namespace BusinessApp.WebApp.Services
 
         public (long, DateTime) ReadPersonsWithAggregation(int anz)
         {
-            CreateAndInsertPostgresTimer(anz);
+            //CreateAndInsertPostgresTimer(anz);
             var personen = BueroContext.Personen.ToList();
             Stopwatch timer = new();
             timer.Start();
@@ -135,7 +135,7 @@ namespace BusinessApp.WebApp.Services
         //Postgres Update
         public long UpdatePostgresTimer(int anz)
         {
-            CreateAndInsertPostgresTimer(anz);
+            //CreateAndInsertPostgresTimer(anz);
             var personen = BueroContext.Personen.ToList();
             var geraete = BueroContext.Geraete.ToList();
 
@@ -158,7 +158,7 @@ namespace BusinessApp.WebApp.Services
         //Postgres Delete
         public long DeletePostgresTimer(int anz)
         {
-            CreateAndInsertPostgresTimer(anz);
+            //CreateAndInsertPostgresTimer(anz);
             var personen = BueroContext.Personen.ToList();
             var geraete = BueroContext.Geraete.ToList();
             Stopwatch timer = new();
@@ -193,7 +193,7 @@ namespace BusinessApp.WebApp.Services
         //Mongo Read
         public long ReadMongoTimer(bool withIndex, int anz, int filter) // 0 = no filter, 1 = filter, 2 = filter and projection, 3 = filter, projection and sorting, 4 = no filter aggregate
         {
-            CreateAndInsertMongoTimer(withIndex, anz);
+            //CreateAndInsertMongoTimer(withIndex, anz);
             Stopwatch timer = new();
             timer.Start();
 
@@ -258,7 +258,7 @@ namespace BusinessApp.WebApp.Services
         //Mongo Update
         public long UpdateMongoTimer(bool withIndex, int anz)
         {
-            CreateAndInsertMongoTimer(withIndex, anz);
+            //CreateAndInsertMongoTimer(withIndex, anz);
             Stopwatch timer = new();
             timer.Start();
 
@@ -279,7 +279,7 @@ namespace BusinessApp.WebApp.Services
         //Mongo Delete
         public long DeleteMongoTimer(bool withIndex, int anz)
         {
-            CreateAndInsertMongoTimer(withIndex, anz);
+            //CreateAndInsertMongoTimer(withIndex, anz);
             Stopwatch timer = new();
             timer.Start();
 
