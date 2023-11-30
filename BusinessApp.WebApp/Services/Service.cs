@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using BusinessApp.Application.Infrastructure;
 using BusinessApp.Application.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using MongoDB.Driver;
 using System.Diagnostics;
@@ -19,8 +20,8 @@ namespace BusinessApp.WebApp.Services
         {
             BueroContext = bueroContext;
             BueroMongoContext = bueroMongoContext;
-            CreateAndInsertPostgresTimer(100);
-            CreateAndInsertMongoTimer(true, 100);
+            //CreateAndInsertPostgresTimer(1);
+            //CreateAndInsertMongoTimer(true, 1);
         }
 
         //Postgres Create
@@ -44,7 +45,7 @@ namespace BusinessApp.WebApp.Services
             Stopwatch timer = new();
 
             timer.Start();
-            var personen = BueroContext.Personen.ToList();
+            var personen = BueroContext.Personen.Include(x => x.Geraete).ToList();
             timer.Stop();
 
             return (timer.ElapsedMilliseconds, personen);
@@ -56,7 +57,7 @@ namespace BusinessApp.WebApp.Services
             Stopwatch timer = new();
 
             timer.Start();
-            var personen = BueroContext.Personen.ToList().FindAll(x => x.Gebdat < DateTime.Now.AddDays(-5000));
+            var personen = BueroContext.Personen.Include(x => x.Geraete).ToList().FindAll(x => x.Gebdat < DateTime.Now.AddDays(-5000));
             timer.Stop();
 
             return (timer.ElapsedMilliseconds, personen);
@@ -65,7 +66,7 @@ namespace BusinessApp.WebApp.Services
         public (long, List<Person>) ReadPersonsWithFilterAndProjektion(int anz)
         {
             //CreateAndInsertPostgresTimer(anz);
-            var personen = BueroContext.Personen.ToList();
+            var personen = BueroContext.Personen.Include(x => x.Geraete).ToList();
             Stopwatch timer = new();
 
             timer.Start();
@@ -90,7 +91,7 @@ namespace BusinessApp.WebApp.Services
         public (long, List<Person>) ReadPersonsWithFilterProjektionAndSorting(int anz)
         {
             //CreateAndInsertPostgresTimer(anz);
-            var personen = BueroContext.Personen.ToList();
+            var personen = BueroContext.Personen.Include(x => x.Geraete).ToList();
             Stopwatch timer = new();
             timer.Start();
 
@@ -118,7 +119,7 @@ namespace BusinessApp.WebApp.Services
         public (long, DateTime) ReadPersonsWithAggregation(int anz)
         {
             //CreateAndInsertPostgresTimer(anz);
-            var personen = BueroContext.Personen.ToList();
+            var personen = BueroContext.Personen.Include(x => x.Geraete).ToList();
             Stopwatch timer = new();
             timer.Start();
 
@@ -130,15 +131,24 @@ namespace BusinessApp.WebApp.Services
 
         public List<Geraet> GetGeraetePerPerson(int id)
         {
-            return BueroContext.Personen.ToList().FirstOrDefault(x => x.Id == id).Geraete.ToList();
+            if (id == null)
+                return new List<Geraet>();
+            else
+            {
+                Person p = BueroContext.Personen.Include(x => x.Geraete).ToList().FirstOrDefault(x => x.Id == id);
+                if (p == null)
+                    return new List<Geraet>();
+                else
+                    return p.Geraete.ToList();
+            }
         }
 
         //Postgres Update
         public long UpdatePostgresTimer(int anz)
         {
             //CreateAndInsertPostgresTimer(anz);
-            var personen = BueroContext.Personen.ToList();
-            var geraete = BueroContext.Geraete.ToList();
+            var personen = BueroContext.Personen.Include(x => x.Geraete).ToList();
+            var geraete = BueroContext.Geraete.Include(x => x.Person).ToList();
 
             Stopwatch timer = new();
             timer.Start();
@@ -160,8 +170,8 @@ namespace BusinessApp.WebApp.Services
         public long DeletePostgresTimer(int anz)
         {
             //CreateAndInsertPostgresTimer(anz);
-            var personen = BueroContext.Personen.ToList();
-            var geraete = BueroContext.Geraete.ToList();
+            var personen = BueroContext.Personen.Include(x => x.Geraete).ToList();
+            var geraete = BueroContext.Geraete.Include(x => x.Person).ToList();
             Stopwatch timer = new();
             timer.Start();
 

@@ -32,14 +32,23 @@ namespace BusinessApp.WebApp.Pages
 
         //}
 
+
         public void OnGet()
         {
 
         }
 
-        public void OnPostSetGeraete(int id)
+        public void OnGetGeraete(int id)
         {
+            OnGet();
             gereate = service.GetGeraetePerPerson(id);
+            Console.WriteLine(gereate.Count);
+        }
+
+        public async Task<IActionResult> OnPostSetGeraete(int personid)
+        {
+            //gereate = service.GetGeraetePerPerson(personid);
+            return RedirectToPage("Index", "Geraete", new { id = personid });
         }
 
         public void changeFilter(int filter)

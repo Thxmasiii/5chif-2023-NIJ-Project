@@ -36,7 +36,7 @@
                 @foreach (var person in @Model.persons)
                 {
                     <form method="post">
-                        <button  asp-page-handler="SetGeraete" asp-route-id="@person.Id">@person.Name</button>
+                        <button asp-page-handler="SetGeraete" asp-route-personid="@person.Id">@person.Id @person.Name</button>
                     </form>
                 }
                 

@@ -46,6 +46,10 @@ else
 {
     BueroContext.Database.EnsureDeleted();
     BueroContext.Database.EnsureCreated();
+    BueroMongoContext.DeleteDb();
+    Service s = new Service(BueroContext, BueroMongoContext);
+    s.CreateAndInsertPostgresTimer(10);
+    s.CreateAndInsertMongoTimer(true, 10);
 }
 
 app.UseHttpsRedirection();
