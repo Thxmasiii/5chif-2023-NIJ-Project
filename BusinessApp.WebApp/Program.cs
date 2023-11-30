@@ -13,7 +13,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddTransient<IService, Service>();
 
 string connection = "Username=postgres;Password=postgres;Server=localhost;Port=5432;Database=buero";
-BueroContext BueroContext = new BueroContext(new DbContextOptionsBuilder<BueroContext>()
+BueroContext bueroContext = new BueroContext(new DbContextOptionsBuilder<BueroContext>()
     .UseNpgsql(connection)
                 //.EnableSensitiveDataLogging()
                 //.LogTo(Console.WriteLine, LogLevel.Information)

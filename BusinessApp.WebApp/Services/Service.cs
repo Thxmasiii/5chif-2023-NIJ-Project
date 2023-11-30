@@ -19,6 +19,8 @@ namespace BusinessApp.WebApp.Services
         {
             BueroContext = bueroContext;
             BueroMongoContext = bueroMongoContext;
+            CreateAndInsertPostgresTimer(100);
+            CreateAndInsertMongoTimer(true, 100);
         }
 
         //Postgres Create
