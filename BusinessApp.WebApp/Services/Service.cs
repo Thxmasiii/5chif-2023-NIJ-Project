@@ -202,68 +202,78 @@ namespace BusinessApp.WebApp.Services
         }
 
         //Mongo Read
-        public long ReadMongoTimer(bool withIndex, int anz, int filter) // 0 = no filter, 1 = filter, 2 = filter and projection, 3 = filter, projection and sorting, 4 = no filter aggregate
+        public (long, List<MongoPerson>) ReadMongoPersonsNoFilter(int anz)
         {
-            //CreateAndInsertMongoTimer(withIndex, anz);
+            //CreateAndInsertMongoTimer(false, anz);
             Stopwatch timer = new();
             timer.Start();
-
-            // no filter
-            var personen = BueroMongoContext.Personen.Find(x => true).ToList();
-            var geraete = BueroMongoContext.Geraete.Find(x => true).ToList();
-
-            // filter
-            if (filter == 1)
-            {
-                var personenFilter = BueroMongoContext.Personen.Find(x => x.Gebdat < DateTime.Now.AddDays(-5000)).ToList();
-                var geraeteFilter = BueroMongoContext.Geraete.Find(x => x.Person.Equals(personen[0])).ToList();
-            }
-
-            // filter and projektion
-            if (filter == 2)
-            {
-                var personenFilterProjektion = BueroMongoContext.Personen
-                    .Find(x => x.Gebdat < DateTime.Now.AddDays(-5000))
-                    .Project(x => x.Name)
-                    .ToList();
-                var geraeteFilterProjektion = BueroMongoContext.Geraete
-                    .Find(x => x.Person.Equals(personen[0]))
-                    .Project(x => x.Name)
-                    .ToList();
-            }
-            //with filter, projektion, sorting
-            if (filter == 3)
-            {
-                var personenFilterProjektionSorting = BueroMongoContext.Personen
-                    .Find(x => x.Gebdat < DateTime.Now.AddDays(-5000))
-                    .Project(x => x.Name)
-                    .SortBy(x => x.Name)
-                    .ToList();
-                var geraeteFilterProjektionSorting = BueroMongoContext.Geraete
-                    .Find(x => x.Person.Equals(personen[0]))
-                    .Project(x => x.Name)
-                    .SortBy(x => x.Name)
-                    .ToList();
-            }
-
-            //no filter, aggregation
-            if (filter == 4)
-            {
-                var personenAggregation = BueroMongoContext.Personen.Aggregate()
-                                            .Group(x => x.Gebdat, g =>
-                                                new
-                                                {
-                                                    Max = g.Max(a => DateTime.Now - a.Gebdat)
-                                                }).ToList()[0];
-                var geraeteAggregation = BueroMongoContext.Geraete.Aggregate()
-                                            .Group(x => x.Person, g =>
-                                                new
-                                                {
-                                                    Max = g.Max(a => DateTime.Now - a.Person.Gebdat)
-                                                }).ToList()[0];
-            }
+            List<MongoPerson> personen = BueroMongoContext.Personen.Find(x => true).ToList();
             timer.Stop();
-            return timer.ElapsedMilliseconds;
+            return (timer.ElapsedMilliseconds, personen);
+        }
+
+        public (long, List<MongoPerson>) ReadMongoPersonsWithFilter(int anz)
+        {
+            //CreateAndInsertMongoTimer(false, anz);
+            Stopwatch timer = new();
+            timer.Start();
+            List<MongoPerson> personen = BueroMongoContext.Personen.Find(x => x.Gebdat < DateTime.Now.AddDays(-5000)).ToList();
+            timer.Stop();
+            return (timer.ElapsedMilliseconds, personen);
+        }
+
+        public (long, List<MongoPerson>) ReadMongoPersonsWithFilterAndProjection(int anz)
+        {
+            //CreateAndInsertMongoTimer(false, anz);
+            List<MongoPerson> personen = new();
+            Stopwatch timer = new();
+            timer.Start();
+            var personenFilterProjektion = BueroMongoContext.Personen
+                .Find(x => x.Gebdat < DateTime.Now.AddDays(-5000))
+                .Project(x => new { x.Id, x.Name })
+                .ToList();
+            timer.Stop();
+            personenFilterProjektion.ToList().ForEach(person =>
+            {
+                MongoPerson p = new(person.Name, DateTime.UtcNow, Application.Infrastructure.BueroMongoContext.Geschlecht.Maennlich, person.Id);
+                personen.Add(p);
+            });
+            return (timer.ElapsedMilliseconds, personen);
+        }
+
+        public (long, List<MongoPerson>) ReadMongoTimerWithFilterProjektionAndSorting(int anz)
+        {
+            //CreateAndInsertMongoTimer(false, anz);
+            List<MongoPerson> personen = new();
+            Stopwatch timer = new();
+            timer.Start();
+            var personenFilterProjektionSorting = BueroMongoContext.Personen
+                .Find(x => x.Gebdat < DateTime.Now.AddDays(-5000))
+                .Project(x => new { x.Id, x.Name })
+                .SortBy(x => x.Name)
+                .ToList();
+            timer.Stop();
+            personenFilterProjektionSorting.ToList().ForEach(person =>
+            {
+                MongoPerson p = new(person.Name, DateTime.UtcNow, Application.Infrastructure.BueroMongoContext.Geschlecht.Maennlich, person.Id);
+                personen.Add(p);
+            });
+            return (timer.ElapsedMilliseconds, personen);
+        }
+
+        public (long, DateTime) ReadMongoPersonsWithAggregation(int anz)
+        {
+            //CreateAndInsertMongoTimer(false, anz);
+            Stopwatch timer = new();
+            timer.Start();
+            var personenAggregation = BueroMongoContext.Personen.Aggregate()
+                                        .Group(x => x.Gebdat, g =>
+                                                                                   new
+                                                                                   {
+                                                                                       Gebdat = g.Max(a => a.Gebdat)
+                                                                                   }).ToList()[0];
+            timer.Stop();
+            return (timer.ElapsedMilliseconds, personenAggregation.Gebdat);
         }
 
         //Mongo Update
