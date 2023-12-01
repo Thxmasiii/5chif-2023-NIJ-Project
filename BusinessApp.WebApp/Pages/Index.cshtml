@@ -10,13 +10,12 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <select name="number" onchange="changeFilter(this)">
-                    <option value="0">No Filter</option>
-                    <option value="1">Filter</option>
-                    <option value="2">Filter, Projection</option>
-                    <option value="3">Filter, Projection, Sorting</option>
-                    <option value="4">Aggregation</option>
-                </select>
+                <form method="post">
+                    <button asp-page-handler="Filter" asp-route-f="0">No Filter</button>
+                    <button asp-page-handler="Filter" asp-route-f="1">Filter</button>
+                    <button asp-page-handler="Filter" asp-route-f="2">Filter and Projection</button>
+                    <button asp-page-handler="Filter" asp-route-f="3">Filter, Projection and Sorting</button>
+                </form>
             </div>
             <div class="col">
                 <select name="number" onchange="changeDatabaseStruct(this)">
@@ -50,3 +49,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function processSelection() {
+        var selectedOptionValue = $("#myDropdown").val();
+        console.log("onchange" + selectedOptionValue)
+        $.ajax({
+            url: '@Url.Page("Index", "Filter")',
+            method: 'POST',
+            data: { filter: selectedOptionValue },
+            success: function (data) {
+                // Erfolgreiche Verarbeitung
+                // Hier können Sie entsprechend reagieren
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+</script>

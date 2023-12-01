@@ -12,6 +12,9 @@ namespace BusinessApp.WebApp.Pages
         private readonly ILogger<IndexModel> _logger;
         IService service;
 
+        [BindProperty]
+        public int Filter {  get; set; }
+
         long sqlTimer = 0;
         long mongoTimer = 0;
 
@@ -51,9 +54,27 @@ namespace BusinessApp.WebApp.Pages
             return RedirectToPage("Index", "Geraete", new { id = personid });
         }
 
-        public void changeFilter(int filter)
+        public async Task<IActionResult> OnPostFilter(int f)
         {
-            
+            //gereate = service.GetGeraetePerPerson(personid);
+            Console.WriteLine("Post");
+            return RedirectToPage("Index", "ChangeFilter", new { filter = f });
+        }
+
+        public void OnGetChangeFilter(int filter)
+        {
+            if(filter == 0)
+            {
+                (sqlTimer, persons) = service.ReadPersonsNoFilter(1);
+                Console.WriteLine(persons.ToString());
+
+            }                
+            else if (filter == 2)
+                (sqlTimer, persons) = service.ReadPersonsWithFilter(1);
+            else if(filter == 2)
+                (sqlTimer, persons) = service.ReadPersonsWithFilterAndProjektion(1);
+            else if(filter == 3)
+                (sqlTimer, persons) = service.ReadPersonsWithFilterProjektionAndSorting(1);
         }
 
         public void changeDatabaseStruct(int filter)
