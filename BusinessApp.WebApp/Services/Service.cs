@@ -96,10 +96,10 @@ namespace BusinessApp.WebApp.Services
             timer.Start();
 
             var personenFilterProjektionSorting =
-            from person in personen.AsEnumerable()
+            (from person in personen.AsEnumerable()
             where person.Gebdat < DateTime.Now.AddDays(-5000)
             orderby person.Name
-            select new { person.Id, person.Name };
+            select new { person.Id, person.Name });
 
             timer.Stop();
 
