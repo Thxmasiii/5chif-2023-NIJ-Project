@@ -13,7 +13,7 @@ namespace BusinessApp.WebApp.Pages
         IService service;
 
         [BindProperty]
-        public int Filter {  get; set; }
+        public int Filter { get; set; } = 0;
 
         long sqlTimer = 0;
         long mongoTimer = 0;
@@ -63,12 +63,9 @@ namespace BusinessApp.WebApp.Pages
 
         public void OnGetChangeFilter(int filter)
         {
+            Filter = filter;
             if(filter == 0)
-            {
-                (sqlTimer, persons) = service.ReadPersonsNoFilter(1);
-                Console.WriteLine(persons.ToString());
-
-            }                
+           (sqlTimer, persons) = service.ReadPersonsNoFilter(1);
             else if (filter == 1)
                 (sqlTimer, persons) = service.ReadPersonsWithFilter(1);
             else if(filter == 2)

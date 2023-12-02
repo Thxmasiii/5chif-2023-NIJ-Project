@@ -137,7 +137,7 @@ namespace BusinessApp.Application.Infrastructure
                     Person: f.PickRandom<MongoPerson>(persons),
                     Id: ObjectId.GenerateNewId());
             })
-            .Generate(anz).ToList();
+            .Generate(anz*2).ToList();
             Geraete.InsertMany(geraete);
             //Geraete.Indexes.CreateOne(
             //    new CreateIndexModel<MongoPerson>(Builders<MongoPerson>.IndexKeys.Ascending(p => p.Id),
@@ -167,7 +167,7 @@ namespace BusinessApp.Application.Infrastructure
                     Person: f.PickRandom<MongoPerson>(persons),
                     Id: ObjectId.GenerateNewId());
             })
-            .Generate(anz).ToList();
+            .Generate(anz*2).ToList();
             Geraete.InsertMany(geraete);
             Geraete.Indexes.CreateOne(
                 new CreateIndexModel<MongoGeraet>(Builders<MongoGeraet>.IndexKeys.Ascending(g => g.Id)));
