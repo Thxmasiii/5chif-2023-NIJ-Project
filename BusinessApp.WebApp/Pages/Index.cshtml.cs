@@ -69,7 +69,7 @@ namespace BusinessApp.WebApp.Pages
                 Console.WriteLine(persons.ToString());
 
             }                
-            else if (filter == 2)
+            else if (filter == 1)
                 (sqlTimer, persons) = service.ReadPersonsWithFilter(1);
             else if(filter == 2)
                 (sqlTimer, persons) = service.ReadPersonsWithFilterAndProjektion(1);
