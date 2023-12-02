@@ -73,9 +73,10 @@ namespace BusinessApp.WebApp.Services
             var query = (from person in personen.AsEnumerable()
                          where person.Gebdat < DateTime.Now.AddDays(-5000)
                          select new { person.Id, person.Name });
+            Console.WriteLine("query: " + query.Count());
             timer.Stop();
 
-            personen.Clear();
+            personen = new();
 
             query.ToList().ForEach(person =>
             {
@@ -84,6 +85,7 @@ namespace BusinessApp.WebApp.Services
                 p.Name = person.Name;
                 personen.Add(p);
             });
+            Console.WriteLine("personen: " + personen.Count());
 
             return (timer.ElapsedMilliseconds, personen);
         }
@@ -103,7 +105,7 @@ namespace BusinessApp.WebApp.Services
 
             timer.Stop();
 
-            personen.Clear();
+            personen = new();
 
             personenFilterProjektionSorting.ToList().ForEach(person =>
             {
