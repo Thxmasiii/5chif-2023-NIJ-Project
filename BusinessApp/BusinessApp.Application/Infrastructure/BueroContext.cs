@@ -51,7 +51,7 @@ namespace BusinessApp.Application.Infrastructure
             var fakeGeraet = new Faker<Geraet>().CustomInstantiator(f =>
             {
                 return new Geraet(f.Lorem.Word(), f.Lorem.Word(), fakePerson[f.Random.Number(0,anz-1)].Id);
-            }).Generate(anz).ToList();
+            }).Generate(anz*2).ToList();
             AddRange(fakeGeraet);
             SaveChanges();
 

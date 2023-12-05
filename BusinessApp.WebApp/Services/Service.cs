@@ -100,9 +100,9 @@ namespace BusinessApp.WebApp.Services
 
             var personenFilterProjektionSorting =
             (from person in personen.AsEnumerable()
-            where person.Gebdat < DateTime.Now.AddDays(-5000)
-            orderby person.Name
-            select new { person.Id, person.Name });
+             where person.Gebdat < DateTime.Now.AddDays(-5000)
+             orderby person.Name
+             select new { person.Id, person.Name });
 
             timer.Stop();
 
@@ -134,16 +134,12 @@ namespace BusinessApp.WebApp.Services
 
         public List<Geraet> GetGeraetePerPerson(int id)
         {
-            if (id == null)
+            Person p = BueroContext.Personen.Include(x => x.Geraete).ToList().FirstOrDefault(x => x.Id == id);
+            if (p == null)
                 return new List<Geraet>();
             else
-            {
-                Person p = BueroContext.Personen.Include(x => x.Geraete).ToList().FirstOrDefault(x => x.Id == id);
-                if (p == null)
-                    return new List<Geraet>();
-                else
-                    return p.Geraete.ToList();
-            }
+                return p.Geraete.ToList();
+
         }
 
         //Postgres Update
@@ -183,6 +179,17 @@ namespace BusinessApp.WebApp.Services
 
             BueroContext.SaveChanges();
 
+            timer.Stop();
+            return timer.ElapsedMilliseconds;
+        }
+
+        //Postgres Geraet Add
+        public long AddGeraetPostgresTimer(Geraet geraet)
+        {
+            Stopwatch timer = new();
+            timer.Start();
+            BueroContext.Geraete.Add(geraet);
+            BueroContext.SaveChanges();
             timer.Stop();
             return timer.ElapsedMilliseconds;
         }
@@ -319,6 +326,16 @@ namespace BusinessApp.WebApp.Services
             BueroMongoContext.Personen.DeleteMany(Builders<MongoPerson>.Filter.Where(x => true));
             BueroMongoContext.Geraete.DeleteMany(Builders<MongoGeraet>.Filter.Where(x => true));
 
+            timer.Stop();
+            return timer.ElapsedMilliseconds;
+        }
+
+        //Mongo Geraet Add
+        public long AddGeraetMongoTimer(MongoGeraet geraet)
+        {
+            Stopwatch timer = new();
+            timer.Start();
+            BueroMongoContext.Geraete.InsertOne(geraet);
             timer.Stop();
             return timer.ElapsedMilliseconds;
         }

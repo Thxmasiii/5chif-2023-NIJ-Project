@@ -14,7 +14,7 @@ namespace BusinessApp.WebApp.Pages
         IService service;
 
         [BindProperty]
-        public int Filter {  get; set; }
+        public int Filter { get; set; } = 0;
 
         long sqlTimer = 0;
         long mongoTimer = 0;

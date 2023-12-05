@@ -15,6 +15,7 @@ namespace BusinessApp.WebApp.Services
         (long, DateTime) ReadPersonsWithAggregation(int anz);
         long UpdatePostgresTimer(int anz);
         long DeletePostgresTimer(int anz);
+        long AddGeraetPostgresTimer(Geraet geraet);
         long CreateAndInsertMongoTimer(bool withIndex, int anz);
         List<MongoGeraet> GetGeraetePerMongoPerson(ObjectId id);
         (long, List<MongoPerson>) ReadMongoPersonsNoFilter(int anz);
@@ -24,6 +25,7 @@ namespace BusinessApp.WebApp.Services
         (long, DateTime) ReadMongoPersonsWithAggregation(int anz);
         long UpdateMongoTimer(bool withIndex, int anz);
         long DeleteMongoTimer(bool withIndex, int anz);
+        long AddGeraetMongoTimer(MongoGeraet geraet);
         List<Geraet> GetGeraetePerPerson(int id);
     }
 }
