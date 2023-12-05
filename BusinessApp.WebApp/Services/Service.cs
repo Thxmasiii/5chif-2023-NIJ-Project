@@ -3,6 +3,7 @@ using BusinessApp.Application.Infrastructure;
 using BusinessApp.Application.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Diagnostics;
 using static BusinessApp.Application.Infrastructure.BueroMongoContext;
@@ -187,6 +188,15 @@ namespace BusinessApp.WebApp.Services
         }
 
         //Mongo
+        public List<MongoGeraet> GetGeraetePerMongoPerson(ObjectId id)
+        {
+            if (id == null)
+                return new List<MongoGeraet>();
+            else
+            {
+               return BueroMongoContext.Geraete.Find(x => x.Person.Id == id).ToList();
+            }
+        }
         //Mongo Create
         public long CreateAndInsertMongoTimer(bool withIndex, int anz)
         {

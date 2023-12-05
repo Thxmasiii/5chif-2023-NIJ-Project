@@ -30,8 +30,7 @@
     
     <div class="container">
         <div class="row">
-            <div class="col">
-                 
+            <div class="col"> 
                 @foreach (var person in @Model.persons)
                 {
                     <form method="post">
@@ -42,6 +41,23 @@
             </div>
             <div class="col">
                 @foreach (var geraete in Model.gereate)
+                {
+                    <p>@geraete.Name</p>
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                @foreach (var person in @Model.mongoPersons)
+                {
+                    <form method="post">
+                        <button asp-page-handler="SetMongoGeraete" asp-route-personid="@person.Id">@person.Id @person.Name</button>
+                    </form>
+                }
+
+            </div>
+            <div class="col">
+                @foreach (var geraete in Model.mongoGereate)
                 {
                     <p>@geraete.Name</p>
                 }

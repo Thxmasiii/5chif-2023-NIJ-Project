@@ -2,6 +2,7 @@
 using BusinessApp.WebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using static BusinessApp.Application.Infrastructure.BueroMongoContext;
 
@@ -20,13 +21,15 @@ namespace BusinessApp.WebApp.Pages
 
         public List<Person> persons { get; set; } = new();
         public List<Geraet> gereate { get; set; } = new();
-        public List<MongoPerson> MongoPersons { get; set; } = new();
+        public List<MongoPerson> mongoPersons { get; set; } = new();
+        public List<MongoGeraet> mongoGereate { get; set; } = new();
 
         public IndexModel(ILogger<IndexModel> logger, IService _service)
         {
             _logger = logger;
             service = _service;
             (sqlTimer, persons) = service.ReadPersonsNoFilter(1);
+            (mongoTimer, mongoPersons) = service.ReadMongoPersonsNoFilter(1);
             //MongoPersons = service.BueroMongoContext.Personen.Find(_ => true).ToList();
         }
 
@@ -48,10 +51,23 @@ namespace BusinessApp.WebApp.Pages
             Console.WriteLine(gereate.Count);
         }
 
+        public void OnGetMongoGeraete(ObjectId id)
+        {
+            OnGet();
+            mongoGereate = service.GetGeraetePerMongoPerson(id);
+            Console.WriteLine(gereate.Count);
+        }
+
         public async Task<IActionResult> OnPostSetGeraete(int personid)
         {
             //gereate = service.GetGeraetePerPerson(personid);
             return RedirectToPage("Index", "Geraete", new { id = personid });
+        }
+
+        public async Task<IActionResult> OnPostSetMongoGeraete(ObjectId personid)
+        {
+            //gereate = service.GetGeraetePerPerson(personid);
+            return RedirectToPage("Index", "MongoGeraete", new { id = new ObjectId(personid.ToString()) });
         }
 
         public async Task<IActionResult> OnPostFilter(int f)
@@ -63,18 +79,25 @@ namespace BusinessApp.WebApp.Pages
 
         public void OnGetChangeFilter(int filter)
         {
-            if(filter == 0)
-            {
+            if(filter == 0){
                 (sqlTimer, persons) = service.ReadPersonsNoFilter(1);
-                Console.WriteLine(persons.ToString());
-
+                (mongoTimer, mongoPersons) = service.ReadMongoPersonsNoFilter(1);
             }                
-            else if (filter == 1)
+            else if (filter == 1){
                 (sqlTimer, persons) = service.ReadPersonsWithFilter(1);
+                (mongoTimer, mongoPersons) = service.ReadMongoPersonsWithFilter(1);
+            }
             else if(filter == 2)
+            {
                 (sqlTimer, persons) = service.ReadPersonsWithFilterAndProjektion(1);
-            else if(filter == 3)
+                (mongoTimer, mongoPersons) = service.ReadMongoPersonsWithFilterAndProjection(1);
+            }
+            else if(filter == 3){
+
                 (sqlTimer, persons) = service.ReadPersonsWithFilterProjektionAndSorting(1);
+                (mongoTimer, mongoPersons) = service.ReadMongoTimerWithFilterProjektionAndSorting(1);
+            }
+           
         }
 
         public void changeDatabaseStruct(int filter)
