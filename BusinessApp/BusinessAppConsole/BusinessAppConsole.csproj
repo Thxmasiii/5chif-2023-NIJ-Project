@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BusinessApp.WebApp\BusinessApp.WebApp.csproj" />
     <ProjectReference Include="..\BusinessApp.Application\BusinessApp.Application.csproj" />
     <ProjectReference Include="..\BusinessApp.Test\BusinessApp.Test.csproj" />
     <PackageReference Include="ConsoleTables" Version="2.6.1" />

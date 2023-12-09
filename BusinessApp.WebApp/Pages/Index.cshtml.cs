@@ -26,7 +26,7 @@ namespace BusinessApp.WebApp.Pages
         {
             _logger = logger;
             service = _service;
-            (sqlTimer, persons) = service.ReadPersonsNoFilter(1);
+            (sqlTimer, persons) = service.ReadPersonsNoFilter();
             //MongoPersons = service.BueroMongoContext.Personen.Find(_ => true).ToList();
         }
 
@@ -41,14 +41,14 @@ namespace BusinessApp.WebApp.Pages
 
         }
 
-        public void OnGetGeraete(int id)
+        public void OnGetGeraete(Guid id)
         {
             OnGet();
             gereate = service.GetGeraetePerPerson(id);
             Console.WriteLine(gereate.Count);
         }
 
-        public async Task<IActionResult> OnPostSetGeraete(int personid)
+        public async Task<IActionResult> OnPostSetGeraete(Guid personid)
         {
             //gereate = service.GetGeraetePerPerson(personid);
             return RedirectToPage("Index", "Geraete", new { id = personid });
@@ -65,13 +65,13 @@ namespace BusinessApp.WebApp.Pages
         {
             Filter = filter;
             if(filter == 0)
-           (sqlTimer, persons) = service.ReadPersonsNoFilter(1);
+           (sqlTimer, persons) = service.ReadPersonsNoFilter();
             else if (filter == 1)
-                (sqlTimer, persons) = service.ReadPersonsWithFilter(1);
+                (sqlTimer, persons) = service.ReadPersonsWithFilter();
             else if(filter == 2)
-                (sqlTimer, persons) = service.ReadPersonsWithFilterAndProjektion(1);
+                (sqlTimer, persons) = service.ReadPersonsWithFilterAndProjektion();
             else if(filter == 3)
-                (sqlTimer, persons) = service.ReadPersonsWithFilterProjektionAndSorting(1);
+                (sqlTimer, persons) = service.ReadPersonsWithFilterProjektionAndSorting();
         }
 
         public void changeDatabaseStruct(int filter)

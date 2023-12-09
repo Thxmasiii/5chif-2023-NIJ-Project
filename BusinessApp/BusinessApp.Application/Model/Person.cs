@@ -14,7 +14,7 @@ namespace BusinessApp.Application.Model
     public class Person
     {
         [Column("p_id")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Column("p_name")]
         public string Name { get; set; }
