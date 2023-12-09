@@ -34,7 +34,10 @@
                             <button class="btn btn-light" asp-page-handler="SetGeraete" asp-route-personid="@person.Id">@person.Id @person.Name</button>
                         </form>  
                 }
-                
+                <form method="post">
+                    <hr />
+                    <button class="btn btn-light" asp-page-handler="AddGeraet" asp-route-personid="@person.Id">Add</button>
+                </form>
             </div>
             <div class="col">
                 <h4>Geräte</h4>

@@ -51,6 +51,7 @@ namespace BusinessApp.WebApp.Pages
         public void OnGetGeraete(Guid id)
         {
             OnGet();
+            selectedPerson = id;
             gereate = service.GetGeraetePerPerson(id);
             Console.WriteLine(gereate.Count);
         }
@@ -58,6 +59,7 @@ namespace BusinessApp.WebApp.Pages
         public void OnGetMongoGeraete(string id)
         {
             OnGet();
+            selectedMongoPerson = id;
             mongoGereate = service.GetGeraetePerMongoPerson(id);
             Console.WriteLine(gereate.Count);
         }
