@@ -17,7 +17,7 @@ namespace BusinessApp.WebApp.Services
         long DeletePostgresTimer(int anz);
         long AddGeraetPostgresTimer(Geraet geraet);
         long CreateAndInsertMongoTimer(bool withIndex, int anz);
-        List<MongoGeraet> GetGeraetePerMongoPerson(ObjectId id);
+        List<MongoGeraet> GetGeraetePerMongoPerson(string id);
         (long, List<MongoPerson>) ReadMongoPersonsNoFilter(int anz);
         (long, List<MongoPerson>) ReadMongoPersonsWithFilter(int anz);
         (long, List<MongoPerson>) ReadMongoPersonsWithFilterAndProjection(int anz);

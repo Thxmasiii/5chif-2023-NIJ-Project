@@ -195,13 +195,13 @@ namespace BusinessApp.WebApp.Services
         }
 
         //Mongo
-        public List<MongoGeraet> GetGeraetePerMongoPerson(ObjectId id)
+        public List<MongoGeraet> GetGeraetePerMongoPerson(string id)
         {
             if (id == null)
                 return new List<MongoGeraet>();
             else
             {
-               return BueroMongoContext.Geraete.Find(x => x.Person.Id == id).ToList();
+               return BueroMongoContext.Geraete.Find(x => x.Person.Id == new ObjectId(id)).ToList();
             }
         }
         //Mongo Create

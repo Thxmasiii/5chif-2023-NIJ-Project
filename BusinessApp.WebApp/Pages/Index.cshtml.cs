@@ -19,6 +19,10 @@ namespace BusinessApp.WebApp.Pages
         long sqlTimer = 0;
         long mongoTimer = 0;
 
+        Guid selectedPerson = new();
+        string selectedMongoPerson = "";
+
+
         public List<Person> persons { get; set; } = new();
         public List<Geraet> gereate { get; set; } = new();
         public List<MongoPerson> mongoPersons { get; set; } = new();
@@ -51,7 +55,7 @@ namespace BusinessApp.WebApp.Pages
             Console.WriteLine(gereate.Count);
         }
 
-        public void OnGetMongoGeraete(ObjectId id)
+        public void OnGetMongoGeraete(string id)
         {
             OnGet();
             mongoGereate = service.GetGeraetePerMongoPerson(id);
@@ -64,10 +68,11 @@ namespace BusinessApp.WebApp.Pages
             return RedirectToPage("Index", "Geraete", new { id = personid });
         }
 
-        public async Task<IActionResult> OnPostSetMongoGeraete(ObjectId personid)
+        public async Task<IActionResult> OnPostSetMongoGeraete(string personid)
         {
             //gereate = service.GetGeraetePerPerson(personid);
-            return RedirectToPage("Index", "MongoGeraete", new { id = new ObjectId(personid.ToString()) });
+            Console.WriteLine("Monog id " + personid);
+            return RedirectToPage("Index", "MongoGeraete", new { id = personid });
         }
 
         public async Task<IActionResult> OnPostFilter(int f)
