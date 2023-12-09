@@ -53,9 +53,9 @@ agg.AddRow("mit", service.ReadPersonsWithAggregation().Item1 + "ms", service.Rea
 Console.WriteLine(agg);
 
 Console.WriteLine("Vergleich der Laufzeiten beim Setzen eines Index auf die Mongo-Struktur");
-ConsoleTable index = new("", "Mongo");
-index.AddRow("ohne Index", service.CreateAndInsertMongoTimer(false, 1000) + "ms");
-index.AddRow("mit Index", service.CreateAndInsertMongoTimer(true, 1000) + "ms");
+ConsoleTable index = new("", "CREATE", "READ", "UPDATE", "DELETE");
+index.AddRow("ohne Index", service.CreateAndInsertMongoTimer(false, 1000) + "ms", service.ReadMongoAllMethodes() + "ms", service.UpdateMongoTimer() + "ms", service.DeleteMongoTimer() + "ms");
+index.AddRow("mit Index", service.CreateAndInsertMongoTimer(true, 1000) + "ms", service.ReadMongoAllMethodes() + "ms", service.UpdateMongoTimer() + "ms", service.DeleteMongoTimer() + "ms");
 Console.WriteLine(index);
 
 int min = 100;
