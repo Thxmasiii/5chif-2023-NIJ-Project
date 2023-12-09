@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using BusinessApp.Application.Model;
+using MongoDB.Bson;
 using static BusinessApp.Application.Infrastructure.BueroMongoContext;
 
 namespace BusinessApp.WebApp.Services
@@ -17,6 +18,7 @@ namespace BusinessApp.WebApp.Services
         long DeletePostgresTimer();
         long AddGeraetPostgresTimer(Geraet geraet);
         long CreateAndInsertMongoTimer(bool withIndex, int anz);
+        List<MongoGeraet> GetGeraetePerMongoPerson(string id);
         long ReadMongoAllMethodes();
         (long, List<MongoPerson>) ReadMongoPersonsNoFilter();
         (long, List<MongoPerson>) ReadMongoPersonsWithFilter();

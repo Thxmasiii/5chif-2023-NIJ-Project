@@ -6,22 +6,16 @@
 <link rel="stylesheet" href="~/css/bootstrap.css" />
 
 <div class="text-center">
-    <h1 class="display-4">The incredible Data @Model.persons.Count</h1>
+    <h1 class="display-4">The incredible Data</h1>
     <div class="container">
         <div class="row">
             <div class="col">
                 <form method="post">
-                    <button asp-page-handler="Filter" asp-route-f="0">No Filter</button>
-                    <button asp-page-handler="Filter" asp-route-f="1">Filter</button>
-                    <button asp-page-handler="Filter" asp-route-f="2">Filter and Projection</button>
-                    <button asp-page-handler="Filter" asp-route-f="3">Filter, Projection and Sorting</button>
+                    <button class="btn btn-light" asp-page-handler="Filter" asp-route-f="0">No Filter</button>
+                    <button class="btn btn-light" asp-page-handler="Filter" asp-route-f="1">Filter</button>
+                    <button class="btn btn-light" asp-page-handler="Filter" asp-route-f="2">Filter and Projection</button>
+                    <button class="btn btn-light" asp-page-handler="Filter" asp-route-f="3">Filter, Projection and Sorting</button>
                 </form>
-            </div>
-            <div class="col">
-                <select name="number" onchange="changeDatabaseStruct(this)">
-                    <option value="0">Mongo</option>
-                    <option value="1">Postgres</option>
-                </select>
             </div>
         </div>
     </div>
@@ -29,19 +23,43 @@
 
     
     <div class="container">
+        <h3>Postgres</h3>
         <div class="row">
             <div class="col">
-                 
+                <h4>Persons</h4>
                 @foreach (var person in @Model.persons)
                 {
-                    <form method="post">
-                        <button asp-page-handler="SetGeraete" asp-route-personid="@person.Id">@person.Id @person.Name</button>
-                    </form>
+                        <form method="post">
+                            <hr />
+                            <button class="btn btn-light" asp-page-handler="SetGeraete" asp-route-personid="@person.Id">@person.Id @person.Name</button>
+                        </form>  
                 }
                 
             </div>
             <div class="col">
+                <h4>Geräte</h4>
                 @foreach (var geraete in Model.gereate)
+                {
+                    <p>@geraete.Name</p>
+                }
+            </div>
+            </div>
+        <h3>Mongo</h3>
+        <div class="row">
+            <div class="col">
+                <h4>Mongo Persons</h4>
+                @foreach (var person in @Model.mongoPersons)
+                {
+                    <form method="post">
+                        <hr />
+                        <button class="btn btn-light" asp-page-handler="SetMongoGeraete" asp-route-personid="@person.Id.ToString()">@person.Id @person.Name</button>
+                    </form>
+                }
+
+            </div>
+            <div class="col">
+                <h4>Mongo Geräte</h4>
+                @foreach (var geraete in Model.mongoGereate)
                 {
                     <p>@geraete.Name</p>
                 }
