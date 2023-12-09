@@ -48,31 +48,33 @@ namespace BusinessApp.WebApp.Pages
 
         }
 
-        public void OnGetGeraete(Guid id)
+        public void OnGetGeraete(Guid id, int filter)
         {
             OnGet();
+            OnGetChangeFilter(filter);
             gereate = service.GetGeraetePerPerson(id);
             Console.WriteLine(gereate.Count);
         }
 
-        public void OnGetMongoGeraete(string id)
+        public void OnGetMongoGeraete(string id, int filter)
         {
             OnGet();
+            OnGetChangeFilter(filter);
             mongoGereate = service.GetGeraetePerMongoPerson(id);
             Console.WriteLine(gereate.Count);
         }
 
-        public async Task<IActionResult> OnPostSetGeraete(Guid personid)
+        public async Task<IActionResult> OnPostSetGeraete(Guid personid, int filter)
         {
             //gereate = service.GetGeraetePerPerson(personid);
-            return RedirectToPage("Index", "Geraete", new { id = personid });
+            return RedirectToPage("Index", "Geraete", new { id = personid, filter });
         }
 
-        public async Task<IActionResult> OnPostSetMongoGeraete(string personid)
+        public async Task<IActionResult> OnPostSetMongoGeraete(string personid, int filter)
         {
             //gereate = service.GetGeraetePerPerson(personid);
             Console.WriteLine("Monog id " + personid);
-            return RedirectToPage("Index", "MongoGeraete", new { id = personid });
+            return RedirectToPage("Index", "MongoGeraete", new { id = personid, filter });
         }
 
         public async Task<IActionResult> OnPostFilter(int f)
@@ -84,6 +86,7 @@ namespace BusinessApp.WebApp.Pages
 
         public void OnGetChangeFilter(int filter)
         {
+            Filter = filter;
             if(filter == 0){
                 (sqlTimer, persons) = service.ReadPersonsNoFilter();
                 (mongoTimer, mongoPersons) = service.ReadMongoPersonsNoFilter();

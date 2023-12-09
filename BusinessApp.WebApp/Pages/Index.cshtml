@@ -31,7 +31,7 @@
                 {
                         <form method="post">
                             <hr />
-                            <button class="btn btn-light" asp-page-handler="SetGeraete" asp-route-personid="@person.Id">@person.Id @person.Name</button>
+                        <button class="btn btn-light" asp-page-handler="SetGeraete" asp-route-personid="@person.Id" asp-route-filter="@Model.Filter">@person.Id @person.Name</button>
                         </form>  
                 }
                 
@@ -52,7 +52,7 @@
                 {
                     <form method="post">
                         <hr />
-                        <button class="btn btn-light" asp-page-handler="SetMongoGeraete" asp-route-personid="@person.Id.ToString()">@person.Id @person.Name</button>
+                        <button class="btn btn-light" asp-page-handler="SetMongoGeraete" asp-route-personid="@person.Id.ToString()" asp-route-filter="@Model.Filter">@person.Id @person.Name</button>
                     </form>
                 }
 
