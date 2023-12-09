@@ -1,6 +1,8 @@
-﻿using BusinessApp.Application.Model;
+﻿using Bogus;
+using BusinessApp.Application.Model;
 using BusinessApp.WebApp.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -19,11 +21,17 @@ namespace BusinessApp.WebApp.Pages
         long sqlTimer = 0;
         long mongoTimer = 0;
 
-        Guid selectedPerson = new();
-        string selectedMongoPerson = "";
+        //varibales for add
+        public Guid selectedPerson { get; set; } = new Guid();
+        public MongoPerson selectedMongoPerson { get; set; } = new MongoPerson("",DateTime.Now, Application.Infrastructure.BueroMongoContext.Geschlecht.Maennlich);
+
+        [BindProperty]
+        public string newArt { get; set; } = "";
+        [BindProperty]
+        public string newName { get; set; } = "";
 
 
-        public List<Person> persons { get; set; } = new();
+        public List<Application.Model.Person> persons { get; set; } = new();
         public List<Geraet> gereate { get; set; } = new();
         public List<MongoPerson> mongoPersons { get; set; } = new();
         public List<MongoGeraet> mongoGereate { get; set; } = new();
@@ -61,7 +69,7 @@ namespace BusinessApp.WebApp.Pages
         {
             OnGet();
             OnGetChangeFilter(filter);
-            selectedMongoPerson = id;
+            selectedMongoPerson = mongoPersons.Find(x => x.Id == new ObjectId(id));
             mongoGereate = service.GetGeraetePerMongoPerson(id);
             Console.WriteLine(gereate.Count);
         }
@@ -70,6 +78,20 @@ namespace BusinessApp.WebApp.Pages
         {
             //gereate = service.GetGeraetePerPerson(personid);
             return RedirectToPage("Index", "Geraete", new { id = personid, filter });
+        }
+
+        public async Task<IActionResult> OnPostAddGeraet(Guid personid, int filter)
+        {
+            //gereate = service.GetGeraetePerPerson(personid);
+            service.AddGeraetPostgresTimer(new Geraet(newArt, newName, personid));
+            return RedirectToPage("Index", "Geraete", new { id = personid, filter });
+        }
+
+        public async Task<IActionResult> OnPostAddMongoGeraet(string personid, int filter)
+        {
+            MongoPerson person = mongoPersons.Find(x => x.Id == new ObjectId(personid));
+            service.AddGeraetMongoTimer(new MongoGeraet(newName, person));
+            return RedirectToPage("Index", "MongoGeraete", new { id = personid, filter });
         }
 
         public async Task<IActionResult> OnPostSetMongoGeraete(string personid, int filter)
